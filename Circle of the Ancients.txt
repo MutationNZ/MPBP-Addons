@@ -1,0 +1,76 @@
+/*	-INFORMATION-
+	Subject:	Subclass (a.k.a. Circle of the Ancients)
+	Effect:		This is the syntax for adding a new subclass/archetype to a class that is defined in the sheet, or to a class you made yourself
+	Sheet:		v12.999 (2017-11-29)
+	Credit:		laserllama (modified)
+*/
+
+var iFileName = "Homebrew Syntax - Circle of the Ancients.js"; // Optional; This is how the file will be named in the sheet if you import it as a file and not copy-paste its content. Only the first occurrence of this variable will be used
+RequiredSheetVersion(12.999); // Optional; This is the minimum required version number of the sheet for the script to work. If the sheet being used to import the script is of an earlier version, the user will be warned
+
+AddSubClass( // this is the function you will be calling to add the variant
+
+	"Druid", // Parent Class object name; Required; This has to be the exact name of the class of which you are adding a subclass. Look for the name of the class in the ClassList variable. For the default 12 classes these names are: "barbarian", "bard", "cleric", "druid", "fighter", "monk", "paladin", "ranger", "rogue", "sorcerer", "warlock", and "wizard"
+
+	"Circle of the Ancients", // Object name; Required; The name the entry in the ClassSubList will have. This can be anything, it is just something that the sheet uses to reference the new entry and it will never be printed anywhere
+
+	{ // don't forget this opening bracket
+
+		regExpSearch : /^(?=.*special)(?=.*me).*$/i, //required; regular expression of what to look for (i.e. now it looks for any entry that has both the words "special" and "me" in it, disregarding capitalization). If this looks too complicated, just write: /specialme/i
+		subname : "Circle of the Ancients", //required; the name of the subclass
+		source : ["HB", 0], //required; the source and the page number. "HB" stands for homebrew. See the "Complete SourceList" for an overview of sources that are already defined. Or define a new source using the "Homebrew Syntax - SourceList.js". // This can be an array of arrays to indicate the things appears in multiple sources. For example, if something appears on page 7 of the Elemental Evil Player's Companion and on page 115 of the Sword Coast Adventure Guide, use the following: [["E", 7], ["S", 115]]
+		fullname : "", //if no fullname is defined it will be automatically generated as "Class Name (Subclass name)". In this example that would be: "MyClass (Path of SpecialMe)"
+		abilitySave : 6, //overwrites the abilitySave that was defined in the ClassList
+		abilitySaveAlt : 2,//overwrites the abilitySaveAlt that was defined in the ClassList
+		spellcastingFactor : 2, //overwrites the spellcastingFactor that was defined in the ClassList
+		spellcastingExtra : ["alter self", "enlarge/reduce", "fear", "haste", "dominate beast", "freedom of movement", "commune with nature", "tree stride"]
+		features : { //unlike the other entries, "features" will not delete all the features from the ClassList, but will add to the features in the ClassList. For this to work properly, the feature object has to be named "subclassfeatureX" and not something appropriate for the feature. The below are the features of the purple Dragon Knight
+
+			"subclassfeature1" : { // has to start with "subclassfeature" followed by a number. Note that the name has to be unique for this subclass, but it can be the same name as one of the features of the class in the ClassList variable. If you use the same name as a feature in the ClassList variable, it will be overwritten with this entry
+				name : "Ancient Forms",
+				source : ["HB", 0],
+				minlevel : 2,
+				description : "\n   " + "Starting at 2nd level, my wild shape ability is restricted to avian beasts and may fly." + "\n   " + "Starting at 6th level, I can transform into a beasts including ancient forms with a CR = druid level /3, rounded down.",
+				usages : [0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, "\u221E\u00D7 per "],
+				recovery : "short rest",
+				additional : ["", "CR 1/4, no swim; 1 hour", "CR 1/4, no swim; 1 hour", "CR 1/2; 2 hours", "CR 1/2; 2 hours", "CR 2; 3 hours", "CR 2; 3 hours", "CR 2; 4 hours", "CR 3; 4 hours", "CR 3; 5 hours", "CR 3; 5 hours", "CR 4; 6 hours", "CR 4; 6 hours", "CR 4; 7 hours", "CR 5; 7 hours", "CR 5; 8 hours", "CR 5; 8 hours", "CR 6; 9 hours", "CR 6; 9 hours", "CR 6; 10 hours"],
+				action : ["bonus action", " (start/stop)"],
+				eval : "RemoveAction('action', 'Wild Shape (start)'); RemoveAction('bonus action', 'Wild Shape (end)');",
+			},
+			"subclassfeature2" : {
+				name : "Ancient Spells",
+				source : ["HB", 0],
+				minlevel : 3,
+				description : "\n   " + "My link with the great birds of the past grants me extra spells. These spells are always prepared, and don't count against the number of spells you can prepare each day.",
+			},
+			"subclassfeature3" : {
+				name : "Primative Adaptation",
+				source : ["HB", 0],
+				minlevel : 2,
+				description : "\n   " + "My body is permanently enhanced by the ancient creatures whos power I draw upon." + "\n   " + "I gain a climb speed, and swim speed equal to my movement speed if I don't already have them." + "\n   " + "I have advantage on perception checks that rely on smell. " + "\n   " + "I ignore difficult terrain.",
+				speed : {{ swim : { spd : "walk", enc : "walk" } }, { climb : { spd : "walk", enc : "walk" } }}
+			},
+			"subclassfeature4" : {
+				name : "Primal Strikes",
+				source : ["HB", 0],
+				minlevel : 6,
+				description : "\n   " + "At 6th level, my attacks in Ancient Form count as magical.",
+			},
+			"subclassfeature5" : {
+				name : "Dreadful Wildshape",
+				source : ["HB", 0],
+				minlevel : 10,
+				description : "\n   " + "I can expend two uses of my wildshape at the same time to transform into a beast with a CR equal to my druid level /2, rounded down.",
+			},
+			"subclassfeature6" : {
+				name : "Monstrous Form",
+				source : ["HB", 0],
+				minlevel : 14,
+				description : "\n   " + "I can cast the enlarge/reduce spell as a bonus action, targeting only myself, while in wild shape form, without consuming a spell slot or requiring concentration. I regain this feature when I finish a short or long rest.",
+				recovery : "short rest",
+				usages : 1,
+				action : ["bonus action", ""]
+			},
+		}
+	}
+);
